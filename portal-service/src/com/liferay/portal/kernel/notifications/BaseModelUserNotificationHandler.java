@@ -16,7 +16,6 @@ package com.liferay.portal.kernel.notifications;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -69,14 +68,14 @@ public abstract class BaseModelUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-			userNotificationEvent.getPayload());
+		JSONObject jsonObject = getNotificationEventPayload(
+			userNotificationEvent);
 
 		AssetRenderer assetRenderer = getAssetRenderer(jsonObject);
 
 		if (assetRenderer == null) {
 			UserNotificationEventLocalServiceUtil.deleteUserNotificationEvent(
-				userNotificationEvent.getUserNotificationEventId());
+				userNotificationEvent.getPrimaryKey());
 
 			return null;
 		}
@@ -97,8 +96,8 @@ public abstract class BaseModelUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-			userNotificationEvent.getPayload());
+		JSONObject jsonObject = getNotificationEventPayload(
+			userNotificationEvent);
 
 		return jsonObject.getString("entryURL");
 	}

@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.workflowtasks.notifications;
 
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.notifications.BaseUserNotificationHandler;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -41,8 +40,8 @@ public class WorkflowTasksUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-			userNotificationEvent.getPayload());
+		JSONObject jsonObject = getNotificationEventPayload(
+			userNotificationEvent);
 
 		return HtmlUtil.escape(jsonObject.getString("notificationMessage"));
 	}
@@ -53,8 +52,8 @@ public class WorkflowTasksUserNotificationHandler
 			ServiceContext serviceContext)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-			userNotificationEvent.getPayload());
+		JSONObject jsonObject = getNotificationEventPayload(
+			userNotificationEvent);
 
 		String entryClassName = jsonObject.getString("entryClassName");
 

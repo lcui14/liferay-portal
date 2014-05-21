@@ -16,14 +16,18 @@ package com.liferay.portal.kernel.notifications;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.NotificationEvent;
 import com.liferay.portal.model.UserNotificationDelivery;
 import com.liferay.portal.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.model.UserNotificationEvent;
+import com.liferay.portal.service.NotificationEventLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserNotificationDeliveryLocalServiceUtil;
 
@@ -156,6 +160,20 @@ public abstract class BaseUserNotificationHandler
 		throws Exception {
 
 		return StringPool.BLANK;
+	}
+
+	protected JSONObject getNotificationEventPayload(
+			UserNotificationEvent userNotificationEvent)
+		throws Exception {
+
+		long notificationEventId =
+			userNotificationEvent.getNotificationEventId();
+
+		NotificationEvent notificationEvent =
+			NotificationEventLocalServiceUtil.fetchNotificationEvent(
+				notificationEventId);
+
+		return JSONFactoryUtil.createJSONObject(notificationEvent.getPayload());
 	}
 
 	protected boolean isActionable() {
