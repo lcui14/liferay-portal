@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
+import com.liferay.portal.model.NotificationEvent;
 import com.liferay.portal.model.Subscription;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationDeliveryConstants;
@@ -45,6 +46,7 @@ import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.NotificationEventLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.SubscriptionLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
@@ -132,9 +134,22 @@ public class SubscriptionSender implements Serializable {
 					SubscriptionLocalServiceUtil.getSubscriptions(
 						companyId, className, classPK);
 
+				long notificationEventId = 0;
+
+				if (!subscriptions.isEmpty()) {
+					NotificationEvent notificationEvent =
+						createNotificationEvent();
+
+					if (notificationEvent != null) {
+						notificationEventId =
+							notificationEvent.getNotificationEventId();
+					}
+				}
+
 				for (Subscription subscription : subscriptions) {
 					try {
-						notifyPersistedSubscriber(subscription);
+						notifyPersistedSubscriber(
+							subscription, notificationEventId);
 					}
 					catch (Exception e) {
 						_log.error(
@@ -403,6 +418,26 @@ public class SubscriptionSender implements Serializable {
 		this.userId = userId;
 	}
 
+	protected NotificationEvent createNotificationEvent() throws Exception {
+		JSONObject notificationEventJSONObject =
+			JSONFactoryUtil.createJSONObject();
+
+		notificationEventJSONObject.put("userId", userId);
+		notificationEventJSONObject.put("className", _className);
+		notificationEventJSONObject.put("classPK", _classPK);
+		notificationEventJSONObject.put("entryTitle", _entryTitle);
+		notificationEventJSONObject.put("entryURL", _entryURL);
+		notificationEventJSONObject.put("notificationType", _notificationType);
+
+		NotificationEvent notificationEvent =
+			NotificationEventLocalServiceUtil.addNotificationEvent(
+				userId, PortalUtil.getClassNameId(_className), _classPK,
+				notificationEventJSONObject.toString(),
+				System.currentTimeMillis(), portletId);
+
+		return notificationEvent;
+	}
+
 	protected void deleteSubscription(Subscription subscription)
 		throws Exception {
 
@@ -429,14 +464,17 @@ public class SubscriptionSender implements Serializable {
 		return hasPermission(subscription, _className, _classPK, user);
 	}
 
-	protected void notifyPersistedSubscriber(Subscription subscription)
+	protected void notifyPersistedSubscriber(
+			Subscription subscription, long notificationEventId)
 		throws Exception {
 
-		notifyPersistedSubscriber(subscription, _className, _classPK);
+		notifyPersistedSubscriber(
+			subscription, notificationEventId, _className, _classPK);
 	}
 
 	protected void notifyPersistedSubscriber(
-			Subscription subscription, String className, long classPK)
+			Subscription subscription, long notificationEventId,
+			String className, long classPK)
 		throws Exception {
 
 		User user = UserLocalServiceUtil.fetchUserById(
@@ -512,10 +550,10 @@ public class SubscriptionSender implements Serializable {
 				_bulkAddresses.add(bulkAddress);
 			}
 
-			sendUserNotification(user);
+			sendUserNotification(user, notificationEventId);
 		}
 		else {
-			sendNotification(user);
+			sendNotification(user, notificationEventId);
 		}
 	}
 
@@ -537,7 +575,7 @@ public class SubscriptionSender implements Serializable {
 			sendEmail(to, locale);
 		}
 		else {
-			sendNotification(user);
+			sendNotification(user, 0);
 		}
 	}
 
@@ -549,7 +587,7 @@ public class SubscriptionSender implements Serializable {
 	protected void notifySubscriber(Subscription subscription)
 		throws Exception {
 
-		notifyPersistedSubscriber(subscription, null, 0);
+		notifyPersistedSubscriber(subscription, 0, null, 0);
 	}
 
 	/**
@@ -563,7 +601,7 @@ public class SubscriptionSender implements Serializable {
 		throws Exception {
 
 		notifyPersistedSubscriber(
-			subscription, inferredClassName, inferredClassPK);
+			subscription, 0, inferredClassName, inferredClassPK);
 	}
 
 	protected void processMailMessage(MailMessage mailMessage, Locale locale)
@@ -756,21 +794,15 @@ public class SubscriptionSender implements Serializable {
 		}
 	}
 
-	protected void sendNotification(User user) throws Exception {
+	protected void sendNotification(User user, long notificationEventId)
+		throws Exception {
+
 		sendEmailNotification(user);
-		sendUserNotification(user);
+		sendUserNotification(user, notificationEventId);
 	}
 
-	protected void sendUserNotification(User user) throws Exception {
-		JSONObject notificationEventJSONObject =
-			JSONFactoryUtil.createJSONObject();
-
-		notificationEventJSONObject.put("className", _className);
-		notificationEventJSONObject.put("classPK", _classPK);
-		notificationEventJSONObject.put("entryTitle", _entryTitle);
-		notificationEventJSONObject.put("entryURL", _entryURL);
-		notificationEventJSONObject.put("notificationType", _notificationType);
-		notificationEventJSONObject.put("userId", user.getUserId());
+	protected void sendUserNotification(User user, long notificationEventId)
+		throws Exception {
 
 		if (UserNotificationManagerUtil.isDeliver(
 				user.getUserId(), portletId, _notificationClassNameId,
@@ -778,9 +810,8 @@ public class SubscriptionSender implements Serializable {
 				UserNotificationDeliveryConstants.TYPE_PUSH)) {
 
 			UserNotificationEventLocalServiceUtil.sendUserNotificationEvents(
-				user.getUserId(), portletId,
-				UserNotificationDeliveryConstants.TYPE_PUSH,
-				notificationEventJSONObject);
+				user.getUserId(), notificationEventId,
+				UserNotificationDeliveryConstants.TYPE_PUSH);
 		}
 
 		if (UserNotificationManagerUtil.isDeliver(
@@ -789,9 +820,8 @@ public class SubscriptionSender implements Serializable {
 				UserNotificationDeliveryConstants.TYPE_WEBSITE)) {
 
 			UserNotificationEventLocalServiceUtil.sendUserNotificationEvents(
-				user.getUserId(), portletId,
-				UserNotificationDeliveryConstants.TYPE_WEBSITE,
-				notificationEventJSONObject);
+				user.getUserId(), notificationEventId,
+				UserNotificationDeliveryConstants.TYPE_WEBSITE);
 		}
 	}
 
