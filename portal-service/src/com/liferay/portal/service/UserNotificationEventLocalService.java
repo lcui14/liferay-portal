@@ -288,6 +288,32 @@ public interface UserNotificationEventLocalService extends BaseLocalService,
 		java.util.Collection<java.lang.String> uuids, long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived, int start,
+		int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getActionableArchivedUserNotificationEventsCount(long userId,
+		boolean actionRequired, boolean archived);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered, int start,
+		int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getActionableDeliveredUserNotificationEventsCount(long userId,
+		boolean actionRequired, boolean delivered);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getArchivedUserNotificationEvents(
 		long userId, boolean archived);
 

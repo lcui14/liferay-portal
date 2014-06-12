@@ -336,6 +336,50 @@ public class UserNotificationEventLocalServiceUtil {
 		getService().deleteUserNotificationEvents(uuids, companyId);
 	}
 
+	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived) {
+		return getService()
+				   .getActionableArchivedUserNotificationEvents(userId,
+			actionRequired, archived);
+	}
+
+	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived, int start,
+		int end) {
+		return getService()
+				   .getActionableArchivedUserNotificationEvents(userId,
+			actionRequired, archived, start, end);
+	}
+
+	public static int getActionableArchivedUserNotificationEventsCount(
+		long userId, boolean actionRequired, boolean archived) {
+		return getService()
+				   .getActionableArchivedUserNotificationEventsCount(userId,
+			actionRequired, archived);
+	}
+
+	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered) {
+		return getService()
+				   .getActionableDeliveredUserNotificationEvents(userId,
+			actionRequired, delivered);
+	}
+
+	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered, int start,
+		int end) {
+		return getService()
+				   .getActionableDeliveredUserNotificationEvents(userId,
+			actionRequired, delivered, start, end);
+	}
+
+	public static int getActionableDeliveredUserNotificationEventsCount(
+		long userId, boolean actionRequired, boolean delivered) {
+		return getService()
+				   .getActionableDeliveredUserNotificationEventsCount(userId,
+			actionRequired, delivered);
+	}
+
 	public static java.util.List<com.liferay.portal.model.UserNotificationEvent> getArchivedUserNotificationEvents(
 		long userId, boolean archived) {
 		return getService().getArchivedUserNotificationEvents(userId, archived);

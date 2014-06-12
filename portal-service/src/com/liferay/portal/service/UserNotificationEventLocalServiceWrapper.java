@@ -362,6 +362,50 @@ public class UserNotificationEventLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived) {
+		return _userNotificationEventLocalService.getActionableArchivedUserNotificationEvents(userId,
+			actionRequired, archived);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableArchivedUserNotificationEvents(
+		long userId, boolean actionRequired, boolean archived, int start,
+		int end) {
+		return _userNotificationEventLocalService.getActionableArchivedUserNotificationEvents(userId,
+			actionRequired, archived, start, end);
+	}
+
+	@Override
+	public int getActionableArchivedUserNotificationEventsCount(long userId,
+		boolean actionRequired, boolean archived) {
+		return _userNotificationEventLocalService.getActionableArchivedUserNotificationEventsCount(userId,
+			actionRequired, archived);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered) {
+		return _userNotificationEventLocalService.getActionableDeliveredUserNotificationEvents(userId,
+			actionRequired, delivered);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getActionableDeliveredUserNotificationEvents(
+		long userId, boolean actionRequired, boolean delivered, int start,
+		int end) {
+		return _userNotificationEventLocalService.getActionableDeliveredUserNotificationEvents(userId,
+			actionRequired, delivered, start, end);
+	}
+
+	@Override
+	public int getActionableDeliveredUserNotificationEventsCount(long userId,
+		boolean actionRequired, boolean delivered) {
+		return _userNotificationEventLocalService.getActionableDeliveredUserNotificationEventsCount(userId,
+			actionRequired, delivered);
+	}
+
+	@Override
 	public java.util.List<com.liferay.portal.model.UserNotificationEvent> getArchivedUserNotificationEvents(
 		long userId, boolean archived) {
 		return _userNotificationEventLocalService.getArchivedUserNotificationEvents(userId,
