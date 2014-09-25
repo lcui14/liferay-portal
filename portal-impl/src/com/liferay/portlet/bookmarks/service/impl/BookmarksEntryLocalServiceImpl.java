@@ -407,9 +407,6 @@ public class BookmarksEntryLocalServiceImpl
 
 		bookmarksEntryPersistence.update(entry);
 
-		assetEntryLocalService.incrementViewCounter(
-			userId, BookmarksEntry.class.getName(), entry.getEntryId(), 1);
-
 		return entry;
 	}
 

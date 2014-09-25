@@ -43,6 +43,10 @@ else {
 	}
 }
 
+if (entry != null) {
+	AssetEntryLocalServiceUtil.incrementViewCounter(0, BookmarksEntry.class.getName(), entry.getEntryId(), 1);
+}
+
 boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 %>
 

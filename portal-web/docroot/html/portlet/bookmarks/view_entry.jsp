@@ -34,6 +34,10 @@ request.setAttribute(WebKeys.LAYOUT_ASSET_ENTRY, layoutAssetEntry);
 request.setAttribute("view_entry.jsp-entry", entry);
 
 BookmarksUtil.addPortletBreadcrumbEntries(entry, request, renderResponse);
+
+if (entry != null) {
+	AssetEntryLocalServiceUtil.incrementViewCounter(0, BookmarksEntry.class.getName(), entry.getEntryId(), 1);
+}
 %>
 
 <liferay-util:include page="/html/portlet/bookmarks/top_links.jsp" />

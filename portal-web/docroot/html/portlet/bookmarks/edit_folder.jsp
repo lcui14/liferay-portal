@@ -46,6 +46,10 @@ else {
 		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "add-folder"), currentURL);
 	}
 }
+
+if (folder != null) {
+	AssetEntryLocalServiceUtil.incrementViewCounter(0, BookmarksFolder.class.getName(), folder.getFolderId(), 1);
+}
 %>
 
 <c:if test="<%= !windowState.equals(LiferayWindowState.POP_UP) %>">
